@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rutas FIFA 2026 — Guadalajara</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:   #c0392b;
+      --secondary: #2c3e50;
+      --accent:    #e67e22;
+      --green:     #27ae60;
+      --light:     #f5f0eb;
+      --white:     #ffffff;
+      --shadow:    0 4px 20px rgba(0,0,0,.12);
+      --radius:    12px;
+
+      --ruta1-color: #c0392b;   /* Principal  – rojo */
+      --ruta2-color: #2980b9;   /* Secundaria – azul */
+      --ruta3-color: #27ae60;   /* Terciaria  – verde */
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--light);
+      color: var(--secondary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Header ────────────────────────────────────────────────── */
+    header {
+      background: var(--white);
+      border-bottom: 3px solid var(--primary);
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-text strong {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .logo-text span {
+      font-size: 11px;
+      color: #888;
+      font-weight: 400;
+    }
+
+    .header-badge {
+      background: var(--primary);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: .5px;
+    }
+
+    /* ─── Main Layout ───────────────────────────────────────────── */
+    main {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      flex: 1;
+      height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+
+    /* ─── Sidebar ───────────────────────────────────────────────── */
+    .sidebar {
+      background: var(--white);
+      border-right: 1px solid #e0d9d0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      box-shadow: 2px 0 12px rgba(0,0,0,.06);
+    }
+
+    .sidebar-section {
+      padding: 20px;
+      border-bottom: 1px solid #f0ebe4;
+    }
+
+    .sidebar-section:last-child { border-bottom: none; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    /* ─── Selector Cards ────────────────────────────────────────── */
+    .selector-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .selector-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .selector-label .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-origin  { background: var(--primary); }
+    .dot-dest    { background: var(--accent); }
+
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #e0d9d0;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--secondary);
+      background: var(--white);
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: border-color .2s;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn-buscar {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background .2s, transform .1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-buscar:hover  { background: #a93226; }
+    .btn-buscar:active { transform: scale(.98); }
+
+    /* ─── Leyenda ───────────────────────────────────────────────── */
+    .legend-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .legend-line {
+      width: 32px;
+      height: 4px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ─── Resultados ────────────────────────────────────────────── */
+    #resultados {
+      display: none;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    #resultados.visible { display: flex; }
+
+    .ruta-card {
+      border-left: 4px solid transparent;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0ebe4;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .ruta-card:hover { background: #faf7f3; }
+    .ruta-card.active { background: #fdf3f2; }
+
+    .ruta-card.principal  { border-left-color: var(--ruta1-color); }
+    .ruta-card.secundaria { border-left-color: var(--ruta2-color); }
+    .ruta-card.terciaria  { border-left-color: var(--ruta3-color); }
+
+    .ruta-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .ruta-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: white;
+    }
+
+    .badge-principal  { background: var(--ruta1-color); }
+    .badge-secundaria { background: var(--ruta2-color); }
+    .badge-terciaria  { background: var(--ruta3-color); }
+
+    .ruta-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .ruta-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ruta-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .btn-maps {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      color: white;
+      transition: opacity .2s;
+    }
+
+    .btn-maps:hover { opacity: .85; }
+    .btn-maps.principal  { background: var(--ruta1-color); }
+    .btn-maps.secundaria { background: var(--ruta2-color); }
+    .btn-maps.terciaria  { background: var(--ruta3-color); }
+
+    /* ─── Placeholder ───────────────────────────────────────────── */
+    #placeholder {
+      padding: 24px 20px;
+      text-align: center;
+      color: #bbb;
+    }
+
+    #placeholder .placeholder-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    #placeholder p {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ─── Mapa ──────────────────────────────────────────────────── */
+    #map {
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Grayscale + darkened map tiles */
+    .leaflet-tile {
+      filter: grayscale(100%) brightness(0.82) contrast(1.05);
+    }
+
+    /* ─── Popup personalizado ───────────────────────────────────── */
+    .custom-popup .leaflet-popup-content-wrapper {
+      border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(0,0,0,.18);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .custom-popup .leaflet-popup-content {
+      margin: 0;
+      min-width: 220px;
+    }
+
+    .popup-inner {
+      padding: 14px 16px;
+      line-height: 1.4;
+    }
+
+    .popup-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 2px;
+    }
+
+    .popup-sub {
+      font-size: 11px;
+      color: #888;
+    }
+
+    /* ─── Marcadores personalizados ─────────────────────────────── */
+    .marker-pin {
+      width: 36px;
+      height: 36px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,.3);
+    }
+
+    .marker-pin span {
+      transform: rotate(45deg);
+      font-size: 15px;
+    }
+
+    /* ─── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        height: auto;
+      }
+
+      .sidebar { max-height: 50vh; }
+      #map { height: 50vh; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚽</div>
+    <div class="logo-text">
+      <strong>Rutas FIFA 2026</strong>
+      <span>Guadalajara · Plan de Seguridad en Traslados</span>
+    </div>
+  </div>
+  <div class="header-badge">GUADALAJARA · JALISCO · MÉXICO</div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MAIN
+═══════════════════════════════════════════════════════════════ -->
+<main>
+
+  <!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <!-- Selector Origen / Destino -->
+    <div class="sidebar-section">
+      <div class="section-title">Seleccionar Ruta</div>
+      <div class="selector-group">
+
+        <div>
+          <div class="selector-label">
+            <span class="dot dot-origin"></span> Punto de Origen
+          </div>
+          <select id="sel-origen">
+            <option value="">— Selecciona el origen —</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="selector-label">
+            <span class="dot dot-dest"></span> Punto de Destino
+          </div>
+          <select id="sel-destino">
+            <option value="">— Selecciona el destino —</option>
+          </select>
+        </div>
+
+        <button class="btn-buscar" onclick="buscarRutas()">
+          🗺️ Ver Rutas
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Leyenda -->
+    <div class="sidebar-section">
+      <div class="section-title">Leyenda de Rutas</div>
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="legend-line" style="background:var(--ruta1-color)"></div>
+          <span>Ruta Principal</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:var(--ruta2-color)"></div>
+          <span>Ruta Secundaria</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:var(--ruta3-color)"></div>
+          <span>Ruta Terciaria</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="sidebar-section" style="padding:0; flex:1;">
+
+      <div id="placeholder">
+        <div class="placeholder-icon">📍</div>
+        <p>Selecciona un <strong>Origen</strong> y un <strong>Destino</strong> para ver las 3 rutas disponibles con sus instrucciones de traslado.</p>
+      </div>
+
+      <div id="resultados"></div>
+
+    </div>
+
+  </aside>
+
+  <!-- ── MAPA ─────────────────────────────────────────────────── -->
+  <div id="map"></div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════════════ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   1. DATOS DE UBICACIONES
+────────────────────────────────────────────────────────────── */
+const UBICACIONES = {
+  "aeropuerto_gdl": {
+    nombre: "Aeropuerto Internacional de Guadalajara",
+    corto:  "Aeropuerto GDL",
+    emoji:  "✈️",
+    coords: [20.5218, -103.3109]
+  },
+  "base_aerea": {
+    nombre: "Base Aérea Militar Colegio del Aire",
+    corto:  "Base Aérea Militar",
+    emoji:  "🛡️",
+    coords: [20.6530, -103.4100]
+  },
+  "aeropuerto_pvr": {
+    nombre: "Aeropuerto Internacional de Puerto Vallarta",
+    corto:  "Aeropuerto Puerto Vallarta",
+    emoji:  "✈️",
+    coords: [20.6801, -105.2544]
+  },
+  "hyatt": {
+    nombre: "Hyatt Regency Guadalajara (Andares)",
+    corto:  "Hyatt Regency Andares",
+    emoji:  "🏨",
+    coords: [20.7219, -103.4126]
+  },
+  "hilton": {
+    nombre: "Hilton Midtown Guadalajara",
+    corto:  "Hilton Midtown",
+    emoji:  "🏨",
+    coords: [20.6898, -103.3877]
+  },
+  "jw_marriott": {
+    nombre: "JW Marriott Guadalajara",
+    corto:  "JW Marriott",
+    emoji:  "🏨",
+    coords: [20.6780, -103.3870]
+  },
+  "grand_fiesta": {
+    nombre: "Grand Fiesta Americana Guadalajara",
+    corto:  "Grand Fiesta Americana",
+    emoji:  "🏨",
+    coords: [20.6910, -103.3840]
+  },
+  "westin": {
+    nombre: "The Westin Guadalajara",
+    corto:  "The Westin",
+    emoji:  "🏨",
+    coords: [20.6540, -103.3990]
+  },
+  "ac_hotel": {
+    nombre: "AC Hotel Guadalajara Expo",
+    corto:  "AC Hotel Expo",
+    emoji:  "🏨",
+    coords: [20.6580, -103.4020]
+  },
+  "fiesta_inn": {
+    nombre: "Fiesta Inn Guadalajara Expo",
+    corto:  "Fiesta Inn Expo",
+    emoji:  "🏨",
+    coords: [20.6560, -103.4010]
+  },
+  "ibis": {
+    nombre: "Ibis Guadalajara Expo",
+    corto:  "Ibis Guadalajara",
+    emoji:  "🏨",
+    coords: [20.6570, -103.4000]
+  },
+  "estadio_gdl": {
+    nombre: "Estadio Guadalajara (Akron)",
+    corto:  "Estadio Guadalajara",
+    emoji:  "🏟️",
+    coords: [20.6864, -103.4672]
+  },
+  "estadio_jalisco": {
+    nombre: "Estadio Jalisco",
+    corto:  "Estadio Jalisco",
+    emoji:  "🏟️",
+    coords: [20.6960, -103.3620]
+  },
+  "sports_arena": {
+    nombre: "Sports Arena Club",
+    corto:  "Sports Arena Club",
+    emoji:  "🏋️",
+    coords: [20.7050, -103.4800]
+  },
+  "academia_aga": {
+    nombre: "Academia AGA",
+    corto:  "Academia AGA",
+    emoji:  "⚽",
+    coords: [20.7200, -103.5100]
+  },
+  "chivas_verde": {
+    nombre: "Chivas Verde Valle",
+    corto:  "Chivas Verde Valle",
+    emoji:  "⚽",
+    coords: [20.6800, -103.4600]
+  }
+};
+
+/* ──────────────────────────────────────────────────────────────
+   2. BASE DE DATOS DE RUTAS
+   Estructura: RUTAS[origen][destino] = { principal, secundaria, terciaria }
+   Cada ruta: { distancia, tiempo, url, descripcion }
+────────────────────────────────────────────────────────────── */
+const RUTAS = {
+
+  /* ═══ AEROPUERTO GDL → HOTELES / ESTADIO ═══ */
+  "aeropuerto_gdl": {
+    "hyatt": {
+      principal:  { distancia:"30.2 km", tiempo:"60 min", url:"https://acortar.link/gk6B3n", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Calz. Lázaro Cárdenas hasta tomar la salida hacia Av. Patria. Se avanza por dicha avenida hasta llegar a Paseo Andares en Zapopan." },
+      secundaria: { distancia:"39.5 km", tiempo:"60 min", url:"https://acortar.link/tBB2bQ", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Periférico Sur hasta tomar la salida hacia Av. Patria. Se avanza por dicha avenida hasta llegar a Paseo Andares en Zapopan." },
+      terciaria:  { distancia:"39.4 km", tiempo:"70 min", url:"https://acortar.link/NtiYSl", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Av. Periférico Poniente Manuel Gómez Morín hasta tomar la salida hacia Av. Acueducto en Puerta de Hierro, Zapopan. Se finaliza por Av. Acueducto hasta llegar a Paseo Andares, Zapopan." }
+    },
+    "hilton": {
+      principal:  { distancia:"25.4 km", tiempo:"60 min", url:"https://acortar.link/U8rEj0", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Calz. Lázaro Cárdenas hasta tomar la salida hacia Av. San Ignacio/Av. Niño Obrero. Se avanza por Av. Adolfo López Mateos Sur y Norte hasta llegar al Circuito Midtown Jalisco en Italia Providencia, Guadalajara." },
+      secundaria: { distancia:"32.4 km", tiempo:"35 min", url:"https://acortar.link/9hg8Kh", descripcion:"Desde el Hyatt Regency Andares, se dirige al oeste por P.º Andares, girando a la izquierda hacia Blvd. Puerta de Hierro y continuando por Perif./Avenida Acueducto. Se usa el carril izquierdo para incorporarse a Av. Patria, tomando la salida hacia Av. Acueducto Nte/Periférico y manteniéndose a la izquierda. Se continúa por Anillo Perif. Nte. Manuel Gómez Morín, tomando la salida hacia Las Lomas y continuando por A Tequila hasta incorporarse a Carr. Guadalajara–Tepic (Méx 15 S) hasta el Circuito Midtown Jalisco." },
+      terciaria:  { distancia:"48.8 km", tiempo:"70 min", url:"https://acortar.link/olv2JP", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, incorporándose al Nuevo Periférico Oriente y Av. Periférico Poniente Manuel Gómez Morín hasta Av. Fray Antonio Alcalde en Guadalajara. Se finaliza por Av. Coronel División del Norte y Av. Coronel Jorge Álvarez del Castillo hasta llegar al Circuito Midtown Jalisco en Italia Providencia, Guadalajara." }
+    },
+    "jw_marriott": {
+      principal:  { distancia:"25.0 km", tiempo:"60 min", url:"https://acortar.link/KuGS4A", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Calz. Lázaro Cárdenas hasta tomar la salida hacia Av. San Ignacio/Av. Niño Obrero. Se avanza por Av. Adolfo López Mateos Sur y Norte hasta llegar a Mar Báltico en la colonia Country Club, Guadalajara." },
+      secundaria: { distancia:"25.0 km", tiempo:"60 min", url:"https://acortar.link/KuGS4A", descripcion:"Misma ruta principal con variación por Periférico Sur. Desde el Aeropuerto Internacional de Guadalajara, se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Calz. Lázaro Cárdenas hasta tomar la salida hacia Av. San Ignacio/Av. Niño Obrero. Se avanza por Av. Adolfo López Mateos Sur y Norte hasta llegar a Mar Báltico en la colonia Country Club, Guadalajara." },
+      terciaria:  { distancia:"25.9 km", tiempo:"60 min", url:"https://acortar.link/ymd3oq", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Calz. Lázaro Cárdenas hasta tomar la salida hacia Av. San Ignacio/Av. Niño Obrero. Se avanza por Av. Adolfo López Mateos Sur y Norte hasta llegar a Mar Báltico en la colonia Country Club, Guadalajara." }
+    },
+    "grand_fiesta": {
+      principal:  { distancia:"26.8 km", tiempo:"60 min", url:"https://acortar.link/gpQIQq", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Calz. Lázaro Cárdenas hasta tomar la salida hacia Av. San Ignacio/Av. Niño Obrero. Se avanza por Av. Adolfo López Mateos Sur y Norte hasta Av. Américas y llegar al destino en la colonia Providencia, Guadalajara." },
+      secundaria: { distancia:"26.8 km", tiempo:"60 min", url:"https://acortar.link/gpQIQq", descripcion:"Ruta alternativa por Periférico. Desde el Aeropuerto Internacional de Guadalajara, se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Calz. Lázaro Cárdenas hasta Av. Américas y llegar al destino en la colonia Providencia, Guadalajara." },
+      terciaria:  { distancia:"49.5 km", tiempo:"64 min", url:"https://acortar.link/snznKr", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, incorporándose al Nuevo Periférico Oriente y Av. Periférico Poniente Manuel Gómez Morín hacia Zapopan. Se continúa por Enrique Díaz de León, Av. Venustiano Carranza y Av. José Parres Arias hasta Av. Juan Pablo II/Av. Laureles, finalizando por Av. de las Américas hasta llegar al destino en Providencia, Guadalajara." }
+    },
+    "westin": {
+      principal:  { distancia:"21.8 km", tiempo:"51 min", url:"https://acortar.link/HOcARh", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por la Autopista Guadalajara-Morelia hasta la salida hacia Colima/Centro Histórico/Expo Guadalajara por Calz. Lázaro Cárdenas. Posteriormente se avanza por Av. Mariano Otero y Av. Paseo de la Arboleda hasta incorporarse a Av. de Las Rosas en Verde Valle." },
+      secundaria: { distancia:"21.8 km", tiempo:"51 min", url:"https://acortar.link/HOcARh", descripcion:"Ruta alternativa por Periférico Sur. Desde el Aeropuerto Internacional de Guadalajara, se toma la carretera México 23/44, continuando por la Autopista Guadalajara-Morelia hasta la salida hacia Colima/Centro Histórico/Expo Guadalajara por Calz. Lázaro Cárdenas. Se avanza por Av. Mariano Otero hasta Av. de Las Rosas en Verde Valle." },
+      terciaria:  { distancia:"48.2 km", tiempo:"72 min", url:"https://acortar.link/KtMb3d", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, incorporándose al Nuevo Periférico Oriente hasta Joaquín Pardave. Se continúa por Calz. Juan Pablo II, Av. Belisario Domínguez, Av. Francisco Javier Mina y Av. Juárez hasta incorporarse a Av. Mariano Otero, finalizando en Av. de las Rosas en Verde Valle, Guadalajara." }
+    },
+    "ac_hotel": {
+      principal:  { distancia:"23.5 km", tiempo:"53 min", url:"https://acortar.link/CiRFoy", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por la Autopista Guadalajara-Morelia hasta la salida hacia Colima/Centro Histórico/Expo Guadalajara por Calz. Lázaro Cárdenas. Se continúa por Av. Mariano Otero hasta llegar al destino en Plaza del Sol, Zapopan." },
+      secundaria: { distancia:"23.5 km", tiempo:"53 min", url:"https://acortar.link/CiRFoy", descripcion:"Ruta alternativa. Desde el Aeropuerto Internacional de Guadalajara, se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por la Autopista Guadalajara-Morelia hasta la salida hacia Expo Guadalajara por Calz. Lázaro Cárdenas. Se continúa por Av. Mariano Otero hasta llegar al destino en Plaza del Sol, Zapopan." },
+      terciaria:  { distancia:"46.5 km", tiempo:"56 min", url:"https://acortar.link/cTWssk", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, incorporándose al Nuevo Periférico Oriente y Av. Periférico Poniente Manuel Gómez Morín hasta Av. Fray Antonio Alcalde en Guadalajara. Se finaliza por Av. Coronel División del Norte y Av. Coronel Jorge Álvarez del Castillo hasta llegar al destino en la colonia Country Club, Guadalajara." }
+    },
+    "fiesta_inn": {
+      principal:  { distancia:"22.1 km", tiempo:"50 min", url:"https://acortar.link/Xisg81", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por la Autopista Guadalajara-Morelia hasta la salida hacia Colima/Centro Histórico/Expo Guadalajara por Calz. Lázaro Cárdenas. Se finaliza por Av. Mariano Otero hasta llegar al destino en Rinconada del Sol, Zapopan." },
+      secundaria: { distancia:"22.1 km", tiempo:"50 min", url:"https://acortar.link/Xisg81", descripcion:"Ruta alternativa por Periférico. Desde el Aeropuerto Internacional de Guadalajara, se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por la Autopista Guadalajara-Morelia hasta la salida hacia Expo Guadalajara por Calz. Lázaro Cárdenas. Se finaliza por Av. Mariano Otero hasta llegar al destino en Rinconada del Sol, Zapopan." },
+      terciaria:  { distancia:"63.9 km", tiempo:"70 min", url:"https://acortar.link/IxzbZt", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, incorporándose al Nuevo Periférico Oriente, Av. Periférico Poniente Manuel Gómez Morín y la Carretera Guadalajara-Tepic (México 15 S) hasta tomar la salida hacia Colima/Tlajomulco/Expo Guadalajara por Calz. Lázaro Cárdenas en Chapalita, Guadalajara. Se finaliza por C. Parque de las Estrellas hacia Av. Mariano Otero en Rinconada del Sol, Zapopan." }
+    },
+    "ibis": {
+      principal:  { distancia:"21.6 km", tiempo:"50 min", url:"https://acortar.link/DKnRFq", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por la Autopista Guadalajara-Morelia hasta la salida hacia Colima/Centro Histórico/Expo Guadalajara por Calz. Lázaro Cárdenas. Se finaliza por Av. Mariano Otero hasta llegar al destino en Jardines del Bosque, Guadalajara." },
+      secundaria: { distancia:"21.6 km", tiempo:"50 min", url:"https://acortar.link/DKnRFq", descripcion:"Ruta alternativa. Desde el Aeropuerto Internacional de Guadalajara, se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por la Autopista Guadalajara-Morelia hasta la salida hacia Expo Guadalajara por Calz. Lázaro Cárdenas. Se finaliza por Av. Mariano Otero hasta llegar al destino en Jardines del Bosque, Guadalajara." },
+      terciaria:  { distancia:"52.5 km", tiempo:"70 min", url:"https://acortar.link/i7MOmB", descripcion:"Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, incorporándose al Nuevo Periférico Oriente y Av. Periférico Poniente Manuel Gómez Morín hasta Av. Fray Antonio Alcalde en Guadalajara. Se continúa por Av. Coronel División del Norte, Av. Coronel Jorge Álvarez del Castillo y Av. Adolfo López Mateos Norte y Sur hasta llegar a Av. Mariano Otero en Jardines Plaza del Sol, Guadalajara." }
+    },
+    "estadio_gdl": {
+      principal:  { distancia:"32.2 km", tiempo:"73 min", url:"https://acortar.link/9eTD9P", descripcion:"Carretera Chapala – Calz. Lázaro Cárdenas – Av. Vallarta – Av. Del Bajío. Desde el Aeropuerto Internacional de Guadalajara (Carr. Guadalajara-Chapala km 17.5), se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Calz. Lázaro Cárdenas y la Carretera Guadalajara-Tepic (México 15 N) hasta Rinconada del Bosque, Zapopan. Se finaliza por Av. Del Bajío y Circuito J.V.C. hasta llegar al destino en El Bajío, Zapopan." },
+      secundaria: { distancia:"38.8 km", tiempo:"93 min", url:"https://acortar.link/siUCig", descripcion:"Carretera Chapala – Periférico Sur – Av. Aviación – Av. Del Bajío. Desde el Aeropuerto Internacional de Guadalajara, se toma el Blvd. Aeropuerto hacia la carretera México 23/44, continuando por Periférico Sur hacia Av. Aviación y finalizando por Av. Del Bajío hasta el Estadio Guadalajara en El Bajío, Zapopan." },
+      terciaria:  { distancia:"52.2 km", tiempo:"77 min", url:"https://acortar.link/DRtjFB", descripcion:"Carretera Chapala – Nuevo Periférico Oriente – Av. Vallarta – Av. Del Bajío. Desde el Aeropuerto Internacional de Guadalajara, se toma el Blvd. Aeropuerto hacia la carretera México 23/44, incorporándose al Nuevo Periférico Oriente y finalizando por Av. Vallarta y Av. Del Bajío hasta el Estadio Guadalajara en El Bajío, Zapopan." }
+    }
+  },
+
+  /* ═══ BASE AÉREA → HOTELES / ESTADIO ═══ */
+  "base_aerea": {
+    "hyatt": {
+      principal:  { distancia:"12.2 km", tiempo:"35 min", url:"https://acortar.link/IpIjCz", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación, luego se gira a la izquierda en Av. Sta. Margarita. Posteriormente se continúa por Periférico Norte y se dobla a la derecha en Av. Acueducto hasta llegar a Paseo Andares en Real Acueducto, Zapopan." },
+      secundaria: { distancia:"12.8 km", tiempo:"27 min", url:"https://acortar.link/FyS9N4", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación hacia Av. Juan Gil Preciado, girando a la derecha hacia Periférico, posteriormente se toma el desvío hacia Av. Acueducto hasta llegar a Paseo Andares en Real Acueducto, Zapopan." },
+      terciaria:  { distancia:"13.65 km", tiempo:"40 min", url:"https://acortar.link/ZZJ73C", descripcion:"Desde la Base Aérea Militar Colegio del Aire (Av. Aviación S/N, Jardines de Nuevo México, Zapopan), se avanza hacia el suroeste por Av. Aviación, girando a la izquierda hacia Av. Inglaterra para incorporarse al Anillo Periférico Norte Manuel Gómez Morín. Se continúa por Av. Acueducto hasta llegar a Paseo Andares en Real Acueducto, Zapopan." }
+    },
+    "hilton": {
+      principal:  { distancia:"15.0 km", tiempo:"40 min", url:"https://acortar.link/jRhGhP", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma la Av. Base Aérea hasta la Av. Juan Gil Preciado (México 23), continuando hasta Av. de las Américas hasta llegar al Circuito Midtown Jalisco en Italia Providencia, Guadalajara." },
+      secundaria: { distancia:"14.0 km", tiempo:"26 min", url:"https://acortar.link/LQiW3H", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma la Av. Base Aérea hasta la Av. Juan Gil Preciado (México 23), continuando hasta Av. de las Américas hasta llegar al Circuito Midtown Jalisco en Italia Providencia, Guadalajara." },
+      terciaria:  { distancia:"15.0 km", tiempo:"50 min", url:"https://acortar.link/D0g3ZP", descripcion:"Desde la Base Aérea Militar Colegio del Aire (Av. Aviación 5851, La Estrada, Zapopan), se toma Av. Base Aérea hacia Av. Juan Gil Preciado (México 23) en Nuevo México, continuando por dicha avenida hasta Prolongación Av. Américas. Se incorpora a Av. de las Américas hasta llegar al Circuito Midtown Jalisco en Italia Providencia, Guadalajara." }
+    },
+    "jw_marriott": {
+      principal:  { distancia:"16.0 km", tiempo:"40 min", url:"https://acortar.link/7I4RWU", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Base Aérea, hacia Av. Juan Gil Preciado (México 23), continuando por Av. Juan Pablo II/Av. Laureles hasta la colonia Country Club. Se finaliza por Av. Coronel Jorge Álvarez del Castillo hasta Mar Báltico, Guadalajara." },
+      secundaria: { distancia:"16.0 km", tiempo:"40 min", url:"https://acortar.link/7I4RWU", descripcion:"Ruta alternativa. Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Base Aérea hacia Av. Juan Gil Preciado (México 23), continuando por Av. Juan Pablo II/Av. Laureles hasta la colonia Country Club. Se finaliza por Av. Coronel Jorge Álvarez del Castillo hasta Mar Báltico, Guadalajara." },
+      terciaria:  { distancia:"13.2 km", tiempo:"49 min", url:"https://acortar.link/35eyKv", descripcion:"Desde el Colegio del Aire (Av. Base Aérea No. 5, Nuevo México, Zapopan), se toma Av. Base Aérea hacia Av. Juan Gil Preciado (México 23), continuando por Av. Juan Pablo II/Av. Laureles y Av. Manuel Ávila Camacho hasta la colonia Country Club, Guadalajara. Se finaliza por Av. Coronel Jorge Álvarez del Castillo hasta Mar Báltico." }
+    },
+    "grand_fiesta": {
+      principal:  { distancia:"13.9 km", tiempo:"40 min", url:"https://acortar.link/TZbJiT", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Base Aérea hacia Av. Juan Gil Preciado (México 23), continuando hasta Prolongación Av. Américas. Se incorpora a Av. de las Américas hasta llegar al destino en la colonia Providencia, Guadalajara." },
+      secundaria: { distancia:"13.9 km", tiempo:"40 min", url:"https://acortar.link/TZbJiT", descripcion:"Ruta alternativa. Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Base Aérea hacia Av. Juan Gil Preciado (México 23), continuando hasta Prolongación Av. Américas. Se incorpora a Av. de las Américas hasta llegar al destino en la colonia Providencia, Guadalajara." },
+      terciaria:  { distancia:"18.5 km", tiempo:"40 min", url:"https://acortar.link/ucI8Lj", descripcion:"Desde el Colegio del Aire (Av. Base Aérea No. 5, Nuevo México, Zapopan), se avanza por Av. Aviación incorporándose al Anillo Periférico Norte Manuel Gómez Morín, continuando por Av. Acueducto y Av. Patria hasta llegar al destino en la colonia Providencia, Guadalajara." }
+    },
+    "westin": {
+      principal:  { distancia:"20.1 km", tiempo:"50 min", url:"https://acortar.link/cKMyBd", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación hacia el Estadio Guadalajara, posteriormente se dobla a la izquierda sobre la Carretera Guadalajara-Tepic (Av. Vallarta) (México 15 S) hasta llegar a Av. de Las Rosas en Verde Valle, Guadalajara." },
+      secundaria: { distancia:"20.1 km", tiempo:"50 min", url:"https://acortar.link/cKMyBd", descripcion:"Ruta alternativa. Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación hacia el Estadio Guadalajara, posteriormente se dobla a la izquierda sobre la Carretera Guadalajara-Tepic (Av. Vallarta) (México 15 S) hasta llegar a Av. de Las Rosas en Verde Valle, Guadalajara." },
+      terciaria:  { distancia:"25.8 km", tiempo:"50 min", url:"https://acortar.link/mWlDGe", descripcion:"Desde el Colegio del Aire (Av. Aviación S/N, Jardines de Nuevo México, Zapopan), se avanza por la lateral de Aviación incorporándose a la carretera México 23 hacia Arcos de Zapopan. Se accede al Anillo Periférico Norte Manuel Gómez Morín desde Lateral Juan Gil Preciado, continuando por dicho periférico y la Carretera Guadalajara-Tepic (México 15 S) hasta tomar la salida hacia Colima/Tlajomulco/Expo Guadalajara por Calz. Lázaro Cárdenas. Se finaliza por Av. Paseo de la Arboleda hasta Av. de las Rosas en Verde Valle, Guadalajara." }
+    },
+    "ac_hotel": {
+      principal:  { distancia:"20.3 km", tiempo:"50 min", url:"https://acortar.link/fRqD5r", descripcion:"Desde la Base Aérea Militar Colegio del Aire, se toma Av. Aviación (~4.8 km), girando a la izquierda e incorporándose a Carr. Guadalajara–Tepic/Av. Vallarta Eje. Manteniéndose a la izquierda (~4.2 km), manteniéndose a la derecha por Calz. Lázaro Cárdenas, usando el carril central (~1.5 km) y tomando la salida hacia Expo Guadalajara. Se incorpora a Calz. Lázaro Cárdenas/Calz. Lázaro Cárdenas Pte., girando a la derecha hacia Guadalajara-Morelia/Av. Mariano Otero. Continúa por Av. Mariano Otero (~2.1 km), usa el carril derecho y gira a la derecha. El destino es AC Hotel Guadalajara Expo." },
+      secundaria: { distancia:"20.3 km", tiempo:"50 min", url:"https://acortar.link/fRqD5r", descripcion:"Ruta alternativa. Desde la Base Aérea Militar Colegio del Aire, se toma Av. Aviación incorporándose a Carr. Guadalajara–Tepic/Av. Vallarta Eje hasta la salida hacia Expo Guadalajara. Se incorpora a Calz. Lázaro Cárdenas y se continúa por Av. Mariano Otero hasta llegar al destino en Plaza del Sol, Zapopan." },
+      terciaria:  { distancia:"12.2 km", tiempo:"32 min", url:"https://acortar.link/rpvUBZ", descripcion:"Desde el Colegio del Aire (Av. Aviación S/N, Jardines de Nuevo México, Zapopan), se avanza por la lateral de Aviación incorporándose a Av. Juan Gil Preciado (México 23) hasta Prolongación Av. Américas, continuando por Av. de las Américas hasta llegar al destino en la colonia Country Club, Guadalajara." }
+    },
+    "fiesta_inn": {
+      principal:  { distancia:"25.1 km", tiempo:"50 min", url:"https://acortar.link/H47JYs", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Base Aérea, Av. Aviación y la Carretera Guadalajara-Tepic (México 15 S) hasta Av. Mariano Otero en Rinconada del Sol, Zapopan." },
+      secundaria: { distancia:"25.1 km", tiempo:"50 min", url:"https://acortar.link/H47JYs", descripcion:"Ruta alternativa. Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Base Aérea, Av. Aviación y la Carretera Guadalajara-Tepic (México 15 S) hasta Av. Mariano Otero en Rinconada del Sol, Zapopan." },
+      terciaria:  { distancia:"18.8 km", tiempo:"50 min", url:"https://acortar.link/NiBxPC", descripcion:"Desde la B.A.M. 5 (Zapopan), se avanza por Priv. Juan Martín hacia Av. Juan Gil Preciado (México 23), continuando por Av. Juan Pablo II/Av. Laureles hasta Prolongación Av. Américas. Se avanza por Av. de las Américas y Av. Unión, incorporándose a Av. Circunvalación Agustín Yáñez para acceder a Av. Mariano Otero y llegar al destino en Rinconada del Sol, Zapopan." }
+    },
+    "ibis": {
+      principal:  { distancia:"20.0 km", tiempo:"50 min", url:"https://acortar.link/uRIdHf", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación y la Carretera Guadalajara-Tepic (México 15 S) hasta Av. Mariano Otero en Jardines Plaza del Sol, Guadalajara." },
+      secundaria: { distancia:"20.0 km", tiempo:"50 min", url:"https://acortar.link/uRIdHf", descripcion:"Ruta alternativa. Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación y la Carretera Guadalajara-Tepic (México 15 S) hasta Av. Mariano Otero en Jardines Plaza del Sol, Guadalajara." },
+      terciaria:  { distancia:"21.7 km", tiempo:"32 min", url:"https://acortar.link/ggwph7", descripcion:"Desde la entrada del Colegio del Aire (Av. Base Aérea 222, El Triángulo, Zapopan), se avanza por la lateral de Aviación incorporándose a Av. Juan Gil Preciado (México 23), accediendo al Anillo Periférico Norte Manuel Gómez Morín desde Lateral Juan Gil Preciado. Se continúa por dicho periférico y la Carretera Guadalajara-Tepic (México 15 S) hasta tomar la salida hacia Colima/Tlajomulco/Expo Guadalajara por Calz. Lázaro Cárdenas en Chapalita, finalizando por C. Parque de las Estrellas hacia Av. Mariano Otero en Jardines Plaza del Sol, Guadalajara." }
+    },
+    "estadio_gdl": {
+      principal:  { distancia:"12.0 km", tiempo:"30 min", url:"https://acortar.link/SLdiJR", descripcion:"Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación, desde donde se avanza directamente hacia la zona de El Bajío, Zapopan." },
+      secundaria: { distancia:"12.0 km", tiempo:"30 min", url:"https://acortar.link/SLdiJR", descripcion:"Ruta alternativa. Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación, desde donde se avanza directamente hacia la zona de El Bajío, Zapopan." },
+      terciaria:  { distancia:"12.0 km", tiempo:"30 min", url:"https://acortar.link/SLdiJR", descripcion:"Ruta terciaria. Desde la Base Aérea Militar Colegio del Aire en Jalisco, se toma Av. Aviación, desde donde se avanza directamente hacia la zona de El Bajío, Zapopan." }
+    }
+  },
+
+  /* ═══ HYATT → DESTINOS ═══ */
+  "hyatt": {
+    "estadio_gdl": {
+      principal:  { distancia:"11.3 km", tiempo:"37 min", url:"https://acortar.link/fJBaVP", descripcion:"Usa el carril izquierdo para incorporarte a Av. Patria (~290 m), toma la salida hacia Av. Acueducto Nte/Periférico (~190 m) y mantente a la izquierda (~2.5 km). Continúa por Anillo Perif. Nte. Manuel Gómez Morín (~3.6 km) y toma la salida hacia Av. Vallarta/Univ. Cuauhtémoc (~170 m). Gira levemente a la derecha (~230 m), continúa por A Tequila (~170 m) y toma la rampa hacia Puerto Vallarta (~400 m). Gira a la izquierda hacia Av. Del Bajío (~900 m). En la rotonda, toma la 2ª salida hacia Cto. J.V.C. (~1.3 km)." },
+      secundaria: { distancia:"11.3 km", tiempo:"55 min", url:"https://acortar.link/lXnyxA", descripcion:"Dirígete al oeste por P.º Andares (~450 m), gira a la izquierda hacia Blvd. Puerta de Hierro (~150 m) y hacia Av. Patria (~3.2 km). Gira a la derecha hacia Av. Ignacio L. Vallarta. Usa el carril izquierdo para tomar la vía de acceso (~1.3 km) y mantente a la izquierda (~2.6 km). Usa los 2 carriles derechos (~280 m), mantente a la izquierda (~45 m) y gira a la izquierda hacia Av. Del Bajío (~900 m). En la rotonda, toma la 2ª salida hacia Cto. J.V.C. (~1.3 km) y gira a la derecha (~9 m). El destino es Estadio Akron." },
+      terciaria:  { distancia:"13.0 km", tiempo:"40 min", url:"https://acortar.link/g8iNYG", descripcion:"Desde el Hyatt Regency Andares Guadalajara (Blvd. Puerta de Hierro 5065, Zapopan), se toma Av. Paseo Royal Country hacia Av. Juan Palomar y Arias, continuando por Av. Santa Margarita y Av. Aviación hasta llegar al destino en El Bajío, Zapopan." }
+    },
+    "estadio_jalisco": {
+      principal:  { distancia:"10.1 km", tiempo:"29 min", url:"https://acortar.link/o4AtHD", descripcion:"Dirígete al oeste por P.º Andares (~450 m), gira a la izquierda hacia Blvd. Puerta de Hierro (~150 m) y continúa por Perif./Avenida Acueducto (~76 m). Usa el carril derecho para incorporarte a Av. Patria (~290 m), usa el carril central para tomar la salida hacia Av. Acueducto Nte/Periférico (~190 m) y gira a la derecha (~400 m). Incorpórate a Av. Patria (~2.5 km), usa los 2 carriles izquierdos (~550 m) y gira a la derecha (~1.7 km). Gira a la izquierda hacia Av. Fidel Velazquez (~3.5 km)." },
+      secundaria: { distancia:"17.1 km", tiempo:"34 min", url:"https://acortar.link/4MoRxG", descripcion:"Dirígete al oeste por P.º Andares (~450 m), gira a la izquierda hacia Blvd. Puerta de Hierro (~150 m). Usa el carril izquierdo para incorporarte a Av. Patria, toma la salida hacia Av. Acueducto Nte/Periférico y mantente a la izquierda (~1.9 km). Toma la rampa hacia Anillo Perif. Nte. Manuel Gómez Morín (~2.8 km + 8.2 km). Gira a la derecha hacia Calz. Independencia Norte (~2.0 km) y gira a la derecha hacia Av. Fidel Velazquez (~300 m)." },
+      terciaria:  { distancia:"15.5 km", tiempo:"36 min", url:"https://acortar.link/gC7bfX", descripcion:"Desde el Hyatt Regency Andares Guadalajara (Blvd. Puerta de Hierro 5065, Zapopan), se accede al Anillo Periférico Norte Manuel Gómez Morín desde Paseo Andares y Av. Acueducto, continuando por dicho periférico hasta Rancho Nuevo, Guadalajara. Se finaliza tomando C. Ángel Martínez hacia Av. Fidel Velázquez hasta llegar al destino en la colonia Independencia, Guadalajara." }
+    },
+    "sports_arena": {
+      principal:  { distancia:"14.7 km", tiempo:"60 min", url:"https://acortar.link/jYukPX", descripcion:"Dirígete al oeste por P.º Andares (~450 m), gira a la izquierda hacia Blvd. Puerta de Hierro y continúa por Perif./Avenida Acueducto. Usa el carril derecho para incorporarte a Av. Patria, toma la 3ª salida en la rotonda hacia Av. Acueducto (~2.6 km) y continúa por Anillo Perif. Nte. Manuel Gómez Morín (~3.8 km). Accede a Carr. Guadalajara–Tepic desde A Tequila (~950 m), continúa hacia Technology Park Guadalajara (~4.8 km) y hacia Carr. Guadalajara–Tepic (Méx 15 S) (~800 m). Toma la rampa. El destino es Sports Arena." },
+      secundaria: { distancia:"14.5 km", tiempo:"60 min", url:"https://acortar.link/jrdq2N", descripcion:"Dirígete al oeste por P.º Andares, gira a la izquierda hacia Blvd. Puerta de Hierro y usa los 2 carriles derechos hacia Av. Patria (~3.2 km). Toma la salida hacia Pto. Vallarta, incorpórate a Av. Patria y gira a la derecha hacia Av. Ignacio L. Vallarta. Usa el carril izquierdo para tomar la vía de acceso, incorpórate a Carr. Guadalajara–Tepic (~4.1 km), mantente a la izquierda (~3.3 km). Continúa hacia Carr. Guadalajara–Tepic (~800 m) y toma la rampa (~350 m). El destino es Sports Arena." },
+      terciaria:  { distancia:"17.0 km", tiempo:"37 min", url:"https://acortar.link/a5kUBN", descripcion:"Desde el Hyatt Regency Andares Guadalajara (Blvd. Puerta de Hierro 5065, Zapopan), se accede a la Carretera Guadalajara-Tepic (México 15 N) desde Av. Patria en López Mateos, continuando por dicha carretera a través de Technology Park Guadalajara hasta tomar la rampa hacia México 15 S, llegando al destino en Zapopan." }
+    },
+    "academia_aga": {
+      principal:  { distancia:"21.0 km", tiempo:"60 min", url:"https://acortar.link/AA94c7", descripcion:"Dirígete al oeste por P.º Andares (~450 m), gira a la izquierda hacia Blvd. Puerta de Hierro y continúa por Perif./Avenida Acueducto. Usa el carril izquierdo para incorporarte a Av. Patria, toma la salida hacia Av. Acueducto Nte/Periférico (~2.5 km). Continúa por Anillo Perif. Nte. Manuel Gómez Morín (~160 m), gira a la izquierda (~99 m) y sigue por Carr. Guadalajara–Tepic (~14.3 km). Continúa por Carr. la Venta-Nextipac (~2.8 km)." },
+      secundaria: { distancia:"19.3 km", tiempo:"51 min", url:"https://acortar.link/QsdxJ2", descripcion:"Dirígete al oeste por P.º Andares, continúa por P.º de los Virreyes, gira a la izquierda y gira a la derecha hacia Av. Paseo Royal Country (~1.3 km). Gira a la derecha hacia Av. Juan Palomar y Arias (~1.1 km), incorpórate a Av. Central Guillermo González Camarena. Gira a la derecha (~1.0 km), gira a la izquierda hacia Av. Sta. Margarita (~2.2 km) y continúa por Avenida General Ramón Corona (~8.3 km). Gira a la izquierda hacia C. Juan Manuel Ruvalcaba, continúa por C. Hidalgo (~1.1 km) y Carr. la Venta-Nextipac. Gira a la derecha. El destino es Academia Aga." },
+      terciaria:  { distancia:"26.3 km", tiempo:"66 min", url:"https://acortar.link/4ljnKC", descripcion:"Desde el Hyatt Regency Andares Guadalajara (Blvd. Puerta de Hierro 5065, Zapopan), se toma Paseo Andares hacia Av. Patria, continuando por Av. Acueducto y el Anillo Periférico Norte Manuel Gómez Morín. Se avanza por la carretera México 23 y Av. Juan Gil Preciado hasta llegar por C. Hidalgo al destino en Carr. La Venta-Nextipac, Zapopan." }
+    },
+    "chivas_verde": {
+      principal:  { distancia:"6.8 km", tiempo:"21 min", url:"https://acortar.link/EmgF4M", descripcion:"Dirígete al oeste por P.º Andares, gira a la izquierda hacia Blvd. Puerta de Hierro y usa los 2 carriles derechos hacia Av. Patria (~3.2 km). Toma la salida hacia México/Aeropuerto/Pto. Vallarta, incorpórate a Av. Patria (~150 m) y gira a la derecha hacia Av. Ignacio L. Vallarta. Usa el carril izquierdo para tomar la vía de acceso (~1.3 km), mantente a la derecha (~400 m) y gira a la derecha hacia C. Hípico. Gira a la izquierda (~290 m) y gira a la izquierda hacia C. Francisco I. Madero. El destino es Chivas Verde Valle." },
+      secundaria: { distancia:"6.8 km", tiempo:"21 min", url:"https://acortar.link/sdaL7K", descripcion:"Dirígete al oeste por P.º Andares, gira a la izquierda y continúa por Avenida Acueducto. Usa el carril izquierdo para incorporarte a Av. Patria, toma la salida hacia Av. Acueducto Nte y mantente a la izquierda (~2.5 km). Continúa por Anillo Perif. Nte. Manuel Gómez Morín (~1.6 km), toma la salida hacia Las Lomas (~1.3 km) después, Incorpórate a Carr. Guadalajara–Tepic (Méx 15 S), mantente a la izquierda (~2.0 km) e incorpórate a Av. Ignacio L. Vallarta (~1.1 km). Gira a la derecha hacia C. Hípico (~24 m) y continúa. El destino es Chivas Verde Valle." },
+      terciaria:  { distancia:"7.5 km", tiempo:"30 min", url:"https://acortar.link/EmgF4M", descripcion:"Desde el Hyatt Regency Andares Guadalajara (Blvd. Puerta de Hierro 5065, Zapopan), se toma Paseo Andares hacia Av. Patria en Puerta de Hierro, continuando por Av. Universidad y Av. Juan Palomar y Arias hasta incorporarse a Av. Ignacio L. Vallarta. Se finaliza por C. Hípico hacia C. Francisco I. Madero hasta llegar al destino en la colonia Jocotán, Zapopan." }
+    }
+  },
+
+  /* ═══ HILTON → DESTINOS ═══ */
+  "hilton": {
+    "estadio_gdl": {
+      principal:  { distancia:"13.1 km", tiempo:"27 min", url:"https://acortar.link/AYXYGz", descripcion:"Sal del Hilton por Av. López Mateos Nte. y a los ~1.9 km gira a la derecha hacia Av. México (dirección Nogales/Pto. Vallarta). Toma la 3ª salida de la rotonda y sigue ~2.5 km por Av. México. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N) y continúa ~5 km. Luego toma Av. Del Bajío, la 2ª salida de la siguiente rotonda hacia Circuito J.V.C. y, tras ~2.2 km, gira a la derecha. Llegas al Estadio Guadalajara." },
+      secundaria: { distancia:"13.1 km", tiempo:"27 min", url:"https://acortar.link/AYXYGz", descripcion:"Ruta secundaria. Sal del Hilton por Av. López Mateos Nte. y a los ~1.9 km gira a la derecha hacia Av. México (dirección Nogales/Pto. Vallarta). Toma la 3ª salida de la rotonda y sigue ~2.5 km por Av. México. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N) y continúa ~5 km. Luego toma Av. Del Bajío, la 2ª salida de la siguiente rotonda hacia Circuito J.V.C. y, tras ~2.2 km, gira a la derecha. Llegas al Estadio Guadalajara." },
+      terciaria:  { distancia:"15.1 km", tiempo:"30 min", url:"https://acortar.link/FpWty8", descripcion:"Desde el Hilton Guadalajara Midtown (Av. Adolfo López Mateos Nte. 2405, Italia Providencia, Guadalajara), se avanza por Av. Adolfo López Mateos Norte incorporándose a Calle Venecia en Providencia 2a. Sección, continuando por Av. Pablo Neruda hasta llegar al destino en El Bajío, Zapopan." }
+    },
+    "estadio_jalisco": {
+      principal:  { distancia:"7.1 km", tiempo:"17 min", url:"https://acortar.link/AmRV0F", descripcion:"Sal del Hilton por Av. López Mateos Nte., toma la calle Pisa (~450 m) y regresa a López Mateos via Florencia. Continúa por López Mateos ~1.2 km y luego incorpora a Av. Cvln. Jorge Álvarez del Castillo (~1 km). Pasa a Av. División del Norte por el carril derecho (~800 m), gira a la izquierda hacia Calzada Federalismo Norte y, tras ~750 m, gira a la derecha. Sigue ~2.9 km hasta llegar al Estadio Jalisco." },
+      secundaria: { distancia:"7.1 km", tiempo:"17 min", url:"https://acortar.link/AmRV0F", descripcion:"Ruta secundaria. Sal del Hilton por Av. López Mateos Nte., toma la calle Pisa (~450 m) y regresa a López Mateos via Florencia. Continúa por López Mateos ~1.2 km y luego incorpora a Av. Cvln. Jorge Álvarez del Castillo (~1 km). Pasa a Av. División del Norte por el carril derecho (~800 m), gira a la izquierda hacia Calzada Federalismo Norte y, tras ~750 m, gira a la derecha. Sigue ~2.9 km hasta llegar al Estadio Jalisco." },
+      terciaria:  { distancia:"8.4 km", tiempo:"25 min", url:"https://acortar.link/Y1cOyv", descripcion:"Desde el Hilton Guadalajara Midtown (Av. Adolfo López Mateos Nte. 2405, Italia Providencia, Guadalajara), se avanza por Av. Adolfo López Mateos Norte, incorporándose a Av. Coronel Jorge Álvarez del Castillo, Av. Manuel Ávila Camacho y Av. Normalistas hasta llegar por Av. Fidel Velázquez al destino en la colonia Independencia, Guadalajara." }
+    },
+    "sports_arena": {
+      principal:  { distancia:"16.2 km", tiempo:"33 min", url:"https://acortar.link/NDUCCR", descripcion:"Sal del Hilton por Av. López Mateos Nte. y gira a la derecha (~1.9 km). Gira a la derecha hacia Av. México (dirección Nogales/Pto. Vallarta), toma la 3ª salida de la rotonda y continúa ~2.5 km. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N), mantente en los carriles izquierdos y sigue ~9.5 km por la carretera. Toma el carril derecho para salir, da una vuelta en U en C. Paseo del Pacífico y toma la rampa hacia Méx 15 S (~350 m). El destino queda a la derecha." },
+      secundaria: { distancia:"16.2 km", tiempo:"33 min", url:"https://acortar.link/NDUCCR", descripcion:"Ruta secundaria. Sal del Hilton por Av. López Mateos Nte. y gira a la derecha (~1.9 km). Gira a la derecha hacia Av. México (dirección Nogales/Pto. Vallarta), toma la 3ª salida de la rotonda y continúa ~2.5 km. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N), mantente en los carriles izquierdos y sigue ~9.5 km por la carretera. Toma el carril derecho para salir, da una vuelta en U en C. Paseo del Pacífico y toma la rampa hacia Méx 15 S (~350 m). El destino queda a la derecha." },
+      terciaria:  { distancia:"17.0 km", tiempo:"37 min", url:"https://acortar.link/NDUCCR", descripcion:"Desde el Hilton Guadalajara Midtown (Av. Adolfo López Mateos Nte. 2405, Italia Providencia, Guadalajara), se avanza por Av. Adolfo López Mateos Norte, C. General Eulogio Parra, Av. Aztecas y Paseo del Prado hasta Av. Patria, incorporándose a la Carretera Guadalajara-Tepic (México 15 N) en López Mateos, Zapopan. Se continúa por dicha carretera hasta llegar al destino en Technology Park Guadalajara, Zapopan." }
+    },
+    "academia_aga": {
+      principal:  { distancia:"22.8 km", tiempo:"37 min", url:"https://acortar.link/t8ddQh", descripcion:"Sal del Hilton por Av. López Mateos Nte. y gira a la derecha (~1.9 km). Gira a la derecha hacia Av. México (dirección Nogales/Pto. Vallarta), toma la 3ª salida de la rotonda y avanza ~2.5 km. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N), mantente en los carriles izquierdos y recorre ~14.5 km por la carretera. Al llegar a Carr. La Venta–Nextipac, gira a la derecha (justo después de El Gran Chaparral) y continúa ~2.2 km. Finalmente, gira a la izquierda y en ~600 m llegas a la Academia Aga." },
+      secundaria: { distancia:"22.8 km", tiempo:"37 min", url:"https://acortar.link/t8ddQh", descripcion:"Ruta secundaria. Sal del Hilton por Av. López Mateos Nte. y gira a la derecha (~1.9 km). Gira a la derecha hacia Av. México (dirección Nogales/Pto. Vallarta), toma la 3ª salida de la rotonda y avanza ~2.5 km. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N), mantente en los carriles izquierdos y recorre ~14.5 km por la carretera. Al llegar a Carr. La Venta–Nextipac, gira a la derecha y continúa ~2.2 km. Finalmente, gira a la izquierda y en ~600 m llegas a la Academia Aga." },
+      terciaria:  { distancia:"24.0 km", tiempo:"43 min", url:"https://acortar.link/1AkZVM", descripcion:"Desde el Hilton Guadalajara Midtown (Av. Adolfo López Mateos Nte. 2405, Italia Providencia, Guadalajara), se toma Av. Adolfo López Mateos Sur y Calz. Lázaro Cárdenas Poniente hasta incorporarse a la Carretera Guadalajara-Tepic (México 15 N) en Jardín de San Ignacio, Zapopan. Se continúa por dicha carretera hasta tomar Carr. La Venta-Nextipac hasta llegar al destino." }
+    },
+    "chivas_verde": {
+      principal:  { distancia:"8.5 km", tiempo:"20 min", url:"https://acortar.link/8ADnLX", descripcion:"Sal del Hilton por Av. López Mateos Nte. girando a la derecha (~1.9 km). Gira a la derecha hacia Av. México (dir. Nogales/Pto. Vallarta), toma la 3ª salida de la rotonda y sigue ~2.5 km. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N), mantente en los carriles izquierdos ~2.1 km y luego en los derechos ~400 m. Gira a la derecha hacia C. Hípico, luego a la izquierda para continuar por Hípico y finalmente a la izquierda en C. Francisco I. Madero (~81 m). El destino es Chivas Verde Valle." },
+      secundaria: { distancia:"8.5 km", tiempo:"20 min", url:"https://acortar.link/8ADnLX", descripcion:"Ruta secundaria. Sal del Hilton por Av. López Mateos Nte. girando a la derecha (~1.9 km). Gira a la derecha hacia Av. México (dir. Nogales/Pto. Vallarta), toma la 3ª salida de la rotonda y sigue ~2.5 km. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N), mantente en los carriles izquierdos ~2.1 km y luego en los derechos ~400 m. Gira a la derecha hacia C. Hípico, luego a la izquierda para continuar por Hípico y finalmente a la izquierda en C. Francisco I. Madero (~81 m). El destino es Chivas Verde Valle." },
+      terciaria:  { distancia:"9.6 km", tiempo:"22 min", url:"https://acortar.link/4osVBP", descripcion:"Desde el Hilton Guadalajara Midtown (Av. Adolfo López Mateos Nte. 2405, Italia Providencia, Guadalajara), se avanza por Av. Adolfo López Mateos Norte tomando la salida hacia México/Puerto Vallarta/Calz. Lázaro Cárdenas, incorporándose a Calz. Lázaro Cárdenas Poniente hasta la Carretera Guadalajara-Tepic (México 15) en Jardín de San Ignacio, Zapopan. Se continúa por Av. Ignacio L. Vallarta y C. Hípico hasta llegar por C. Francisco I. Madero." }
+    }
+  },
+
+  /* ═══ JW MARRIOTT → DESTINOS ═══ */
+  "jw_marriott": {
+    "estadio_gdl": {
+      principal:  { distancia:"15.5 km", tiempo:"25 min", url:"https://n9.cl/5c330", descripcion:"Sal del JW Marriott por Mar Báltico hacia Mar Caribe, gira a la derecha (~78 m). Continúa por Av. Adolfo López Mateos Nte. (~2.1 km), gira a la derecha hacia Av. México (dir. Nogales/Pto. Vallarta), toma la 3ª salida de la rotonda y sigue ~2.1 km. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N), mantente en los carriles izquierdos ~5 km y luego en los derechos ~280 m. Gira a la izquierda hacia Av. Del Bajío (~45 m), toma la 2ª salida de la rotonda hacia Cto. J.V.C. (~1.3 km) y gira a la derecha (~9 m). El destino es Estadio Guadalajara." },
+      secundaria: { distancia:"15.5 km", tiempo:"25 min", url:"https://n9.cl/5c330", descripcion:"Ruta secundaria. Sal del JW Marriott por Mar Báltico hacia Mar Caribe, gira a la derecha. Continúa por Av. Adolfo López Mateos Nte., gira a la derecha hacia Av. México (dir. Nogales/Pto. Vallarta), toma la 3ª salida de la rotonda y sigue. Incorpora a Av. Ignacio L. Vallarta / Carr. Guadalajara–Tepic (Méx 15 N). Gira a la izquierda hacia Av. Del Bajío, toma la 2ª salida de la rotonda hacia Cto. J.V.C. y gira a la derecha. El destino es Estadio Guadalajara." },
+      terciaria:  { distancia:"15.2 km", tiempo:"33 min", url:"https://acortar.link/XfIKx8", descripcion:"Desde el JW Marriott Hotel Guadalajara (Mar Báltico 2242, Country Club, Guadalajara), se toma Mar Caribe hacia Av. Coronel Jorge Álvarez del Castillo, continuando por Av. Pablo Neruda, Av. Acueducto y Av. Periférico Poniente Manuel Gómez Morín hasta incorporarse al Circuito J.V.C. y llegar al destino en El Bajío, Zapopan." }
+    },
+    "estadio_jalisco": {
+      principal:  { distancia:"6.0 km", tiempo:"16 min", url:"https://n9.cl/abazp", descripcion:"Dirígete hacia Mar Caribe (~10 m). Gira a la derecha hacia Mar Egeo. Gira a la derecha hacia C. Mar Caspio y mantente a la izquierda por Av. Cvln. Jorge Álvarez del Castillo (~500 m). Incorpórate a Av. Cvln. División del Nte. (~3.3 km), gira a la izquierda hacia C. Sierra Leona (~1.0 km) y gira a la derecha hacia Av. Fidel Velazquez (~75 m). El destino es Estadio Jalisco." },
+      secundaria: { distancia:"6.0 km", tiempo:"16 min", url:"https://n9.cl/abazp", descripcion:"Ruta secundaria. Dirígete hacia Mar Caribe. Gira a la derecha hacia Mar Egeo. Gira a la derecha hacia C. Mar Caspio y mantente a la izquierda por Av. Cvln. Jorge Álvarez del Castillo. Incorpórate a Av. Cvln. División del Nte., gira a la izquierda hacia C. Sierra Leona y gira a la derecha hacia Av. Fidel Velazquez. El destino es Estadio Jalisco." },
+      terciaria:  { distancia:"6.0 km", tiempo:"22 min", url:"https://acortar.link/3r1raW", descripcion:"Desde el JW Marriott Hotel Guadalajara (Mar Báltico 2242, Country Club, Guadalajara), se toma Mar Caribe y Mar Egeo hacia C. Mar Caspio, incorporándose a Av. Coronel Jorge Álvarez del Castillo hasta llegar por Av. Fidel Velázquez al destino en la colonia Independencia, Guadalajara." }
+    },
+    "sports_arena": {
+      principal:  { distancia:"16.6 km", tiempo:"34 min", url:"https://acortar.link/phkNMK", descripcion:"Sal del JW Marriott por Mar Báltico hacia Mar Caribe. Continúa por Av. Adolfo López Mateos Nte. (~3 km). Toma la salida hacia Calz. Lázaro Cárdenas. Usa los 2 carriles izquierdos para girar levemente a la izquierda (~1.4 km), mantente a la izquierda por Calz. Lázaro Cárdenas (~5.4 km), mantente a la izquierda (~1.2 km) y usa el carril derecho para tomar la salida (~3.3 km). Da vuelta en U en C. P.º del Pacífico (~400 m) y toma la rampa hacia Carr. Guadalajara–Tepic (Méx 15 S) (~350 m). El destino es Sports Arena." },
+      secundaria: { distancia:"16.6 km", tiempo:"34 min", url:"https://acortar.link/phkNMK", descripcion:"Ruta secundaria. Sal del JW Marriott por Mar Báltico hacia Mar Caribe. Continúa por Av. Adolfo López Mateos Nte. Toma la salida hacia Calz. Lázaro Cárdenas. Mantente a la izquierda por Calz. Lázaro Cárdenas. Da vuelta en U en C. P.º del Pacífico y toma la rampa hacia Carr. Guadalajara–Tepic (Méx 15 S). El destino es Sports Arena." },
+      terciaria:  { distancia:"17.1 km", tiempo:"34 min", url:"https://acortar.link/kN3iFr", descripcion:"Desde el JW Marriott Hotel Guadalajara (Mar Báltico 2242, Country Club, Guadalajara), se toma Av. Pablo Neruda y Av. Patria para acceder a la Carretera Guadalajara-Tepic (México 15 N) en López Mateos, Zapopan, continuando por dicha carretera hasta llegar al destino en Technology Park Guadalajara, Zapopan." }
+    },
+    "academia_aga": {
+      principal:  { distancia:"23.2 km", tiempo:"40 min", url:"https://n9.cl/85cmo", descripcion:"Sal del JW Marriott por Mar Báltico, Continúa por Av. Adolfo López Mateos Nte (~1.7 km). Sigue por Av. Adolfo López Mateos Sur, toma la salida hacia Calz. Lázaro Cárdenas, incorpórate a Av. Adolfo López Mateos Sur y gira a la derecha hacia Av. Guadalupe (dir. Nogales). Gira levemente a la derecha después de 7-Eleven Niños Héroes hacia Calz. Lázaro Cárdenas. Mantente a la izquierda por Calz. Lázaro Cárdenas (~10 km). Sigue por Carr. la Venta-Nextipac, gira a la derecha después de El Gran Chaparral (~2.2 km) y gira a la izquierda (~600 m). El destino es Academia Aga." },
+      secundaria: { distancia:"23.2 km", tiempo:"40 min", url:"https://n9.cl/85cmo", descripcion:"Ruta secundaria. Sal del JW Marriott por Mar Báltico. Continúa por Av. Adolfo López Mateos Nte. Sigue por Av. Adolfo López Mateos Sur, toma la salida hacia Calz. Lázaro Cárdenas. Mantente a la izquierda por Calz. Lázaro Cárdenas. Sigue por Carr. la Venta-Nextipac, gira a la derecha después de El Gran Chaparral y gira a la izquierda. El destino es Academia Aga." },
+      terciaria:  { distancia:"24.7 km", tiempo:"51 min", url:"https://acortar.link/6LiDNq", descripcion:"Desde el JW Marriott Hotel Guadalajara (Mar Báltico 2242, Country Club, Guadalajara), se toma Av. Pablo Neruda y Av. Acueducto para acceder al Anillo Periférico Norte Manuel Gómez Morín en Zapopan, continuando por dicho periférico hasta incorporarse a la Carretera Guadalajara-Tepic (México 15 N). Se finaliza tomando Carr. La Venta-Nextipac hasta llegar al destino." }
+    },
+    "chivas_verde": {
+      principal:  { distancia:"8.9 km", tiempo:"23 min", url:"https://n9.cl/b6hz8", descripcion:"Accede a Av. Adolfo López Mateos Nte. en Lomas de Guevara (~1.5 km), continúa hacia Jardines de Los Arcos y toma la salida en dirección a Calz. Lázaro Cárdenas (~2.4 km). Sigue por Carr. Guadalajara–Tepic (Méx 15) hacia Av. Ignacio L. Vallarta en Parque Metropolitano (~4.0 km). Continúa por Av. Ignacio L. Vallarta, toma C. Hípico hacia C. Francisco I. Madero en Jocotán (~800 m). El destino es Chivas Verde Valle." },
+      secundaria: { distancia:"8.9 km", tiempo:"23 min", url:"https://n9.cl/b6hz8", descripcion:"Ruta secundaria. Accede a Av. Adolfo López Mateos Nte. en Lomas de Guevara, continúa hacia Jardines de Los Arcos y toma la salida en dirección a Calz. Lázaro Cárdenas. Sigue por Carr. Guadalajara–Tepic (Méx 15) hacia Av. Ignacio L. Vallarta en Parque Metropolitano. Continúa por Av. Ignacio L. Vallarta, toma C. Hípico hacia C. Francisco I. Madero en Jocotán. El destino es Chivas Verde Valle." },
+      terciaria:  { distancia:"10.1 km", tiempo:"24 min", url:"https://acortar.link/2J3Z7i", descripcion:"Desde el JW Marriott Hotel Guadalajara (Mar Báltico 2242, Country Club, Guadalajara), se avanza hacia Lomas de Guevara incorporándose a Av. Adolfo López Mateos Norte, tomando la salida hacia México/Puerto Vallarta/Calz. Lázaro Cárdenas. Se continúa por Calz. Lázaro Cárdenas Poniente hasta la Carretera Guadalajara-Tepic (México 15) en Jardín de San Ignacio, Zapopan, finalizando por Av. Ignacio L. Vallarta y C. Hípico hasta llegar por C. Francisco I. Madero al destino." }
+    }
+  },
+
+  /* ═══ GRAND FIESTA → DESTINOS ═══ */
+  "grand_fiesta": {
+    "estadio_gdl": {
+      principal:  { distancia:"15 km", tiempo:"27 min", url:"https://n9.cl/kzdmy", descripcion:"Dirígete hacia Av. de las Américas/Prol. de las Américas, gira a la derecha hacia Av. Pablo Neruda. Gira a la derecha hacia Av. Pablo Neruda (~2.1 km), y gira a la derecha en la 1ª intersección hacia Av. Acueducto (~1.5 km). En la rotonda, toma la 2ª salida y continúa por Av. Acueducto (~2.5 km). Continúa por Anillo Perif. Nte. Manuel Gómez Morín (~4.6 km). Usa el 2º carril desde la derecha (~350 m), toma la salida Cto. JVC hacia Cdad. Judicial (~210 m), gira levemente a la izquierda (~700 m) e incorpórate a Cto. J.V.C. (~500 m). El destino es Estadio Guadalajara." },
+      secundaria: { distancia:"15 km", tiempo:"27 min", url:"https://n9.cl/kzdmy", descripcion:"Ruta secundaria. Dirígete hacia Av. de las Américas/Prol. de las Américas, gira a la derecha hacia Av. Pablo Neruda. Gira a la derecha hacia Av. Pablo Neruda, y gira a la derecha en la 1ª intersección hacia Av. Acueducto. En la rotonda, toma la 2ª salida y continúa por Av. Acueducto. Continúa por Anillo Perif. Nte. Manuel Gómez Morín. Toma la salida Cto. JVC hacia Cdad. Judicial, gira levemente a la izquierda e incorpórate a Cto. J.V.C. El destino es Estadio Guadalajara." },
+      terciaria:  { distancia:"15.7 km", tiempo:"30 min", url:"https://acortar.link/AYKrzC", descripcion:"Desde el Grand Fiesta Americana Guadalajara Country Club (Av. de las Américas 1551, Providencia, Guadalajara), se avanza por Av. de las Américas hasta Av. Adolfo López Mateos Norte, tomando la salida hacia México/Puerto Vallarta/Calz. Lázaro Cárdenas. Se continúa por Calz. Lázaro Cárdenas Poniente hasta la Carretera Guadalajara-Tepic (México 15) en Jardín de San Ignacio, Zapopan, tomando la salida hacia Circuito JVC hasta llegar al destino en El Bajío, Zapopan." }
+    },
+    "estadio_jalisco": {
+      principal:  { distancia:"7.1 km", tiempo:"20 min", url:"https://acortar.link/zi30Lr", descripcion:"Utiliza la Av. Américas hacia la Glorieta Colón, posteriormente toma la Av. Circunvalación Jorge Álvarez del Castillo hacia la izquierda, Mantente en Av. Circunvalación hasta la calle Sierra Leona, posteriormente dobla a la izquierda hasta llegar al Estadio Jalisco." },
+      secundaria: { distancia:"7.1 km", tiempo:"20 min", url:"https://acortar.link/zi30Lr", descripcion:"Ruta secundaria. Utiliza la Av. Américas hacia la Glorieta Colón, posteriormente toma la Av. Circunvalación Jorge Álvarez del Castillo hacia la izquierda, Mantente en Av. Circunvalación hasta la calle Sierra Leona, posteriormente dobla a la izquierda hasta llegar al Estadio Jalisco." },
+      terciaria:  { distancia:"7.2 km", tiempo:"24 min", url:"https://acortar.link/1Vkbhu", descripcion:"Desde el Grand Fiesta Americana Guadalajara Country Club (Av. de las Américas 1551, Providencia, Guadalajara), se avanza por Av. de las Américas/Prolongación de las Américas y Av. Patria hasta llegar por Av. Fidel Velázquez al destino en la colonia Independencia, Guadalajara." }
+    },
+    "sports_arena": {
+      principal:  { distancia:"17.7 km", tiempo:"35 min", url:"https://acortar.link/MAXkAe", descripcion:"Dirígete hacia Av. de las Américas, gira a la derecha hacia Av. Pablo Neruda (~2.3 km). En la rotonda incorpórate a Av. Acueducto (~300 m), gira hacia Av. Montevideo y continúa por P.º del Prado (~1.0 km). Continúa derecho por Av. Naciones Unidas (~950 m), gira hacia C. Thomas Fuller (~170 m), Av. William Shakespeare (~300 m) y Maurice Baring (~500 m). Gira hacia Av. Patria (~100 m) y luego hacia Av. Ignacio L. Vallarta (dir. Nogales/Pto. Vallarta) (~450 m). Usa el carril izquierdo para tomar la vía de acceso hacia Carr. Guadalajara–Tepic (Méx 15 N) (~8.3 km). Da vuelta en U en C. P.º del Pacífico (~400 m) y toma la rampa hacia Carr. Guadalajara–Tepic (Méx 15 S) (~350 m)." },
+      secundaria: { distancia:"17.7 km", tiempo:"35 min", url:"https://acortar.link/MAXkAe", descripcion:"Ruta secundaria. Dirígete hacia Av. de las Américas, gira a la derecha hacia Av. Pablo Neruda. En la rotonda incorpórate a Av. Acueducto, gira hacia Av. Montevideo y continúa por P.º del Prado. Continúa derecho por Av. Naciones Unidas. Gira hacia Av. Patria y luego hacia Av. Ignacio L. Vallarta (dir. Nogales/Pto. Vallarta). Usa el carril izquierdo para tomar la vía de acceso hacia Carr. Guadalajara–Tepic (Méx 15 N). Da vuelta en U en C. P.º del Pacífico y toma la rampa hacia Carr. Guadalajara–Tepic (Méx 15 S)." },
+      terciaria:  { distancia:"18.4 km", tiempo:"30 min", url:"https://acortar.link/r0kDvO", descripcion:"Desde el Grand Fiesta Americana Guadalajara Country Club (Av. de las Américas 1551, Providencia, Guadalajara), se toma Av. Pablo Neruda y Av. Patria para acceder a la Carretera Guadalajara-Tepic (México 15 N) en López Mateos, Zapopan, continuando por dicha carretera hasta llegar al destino en Technology Park Guadalajara, Zapopan." }
+    },
+    "academia_aga": {
+      principal:  { distancia:"24.5 km", tiempo:"39 min", url:"https://n9.cl/qrppi", descripcion:"Dirígete hacia Av. de las Américas, gira a la derecha hacia Av. Lopez Mateos Norte. Posteriormente continúa en López Mateos hasta llegar a Avenida Vallarta. Continúa en Av. Vallarta hasta llegar a La Venta del Astillero, entonces, gira a la derecha en la Carr. la Venta-Nextipac, gira a la derecha después de El Gran Chaparral (~2.2 km) y gira a la izquierda (~600 m). El destino es Academia Aga." },
+      secundaria: { distancia:"24.5 km", tiempo:"39 min", url:"https://n9.cl/qrppi", descripcion:"Ruta secundaria. Dirígete hacia Av. de las Américas, gira a la derecha hacia Av. Lopez Mateos Norte. Posteriormente continúa en López Mateos hasta llegar a Avenida Vallarta. Continúa en Av. Vallarta hasta llegar a La Venta del Astillero, entonces, gira a la derecha en la Carr. la Venta-Nextipac, gira a la derecha después de El Gran Chaparral y gira a la izquierda. El destino es Academia Aga." },
+      terciaria:  { distancia:"26.4 km", tiempo:"49 min", url:"https://acortar.link/TujUWy", descripcion:"Desde el Grand Fiesta Americana Guadalajara Country Club (Av. de las Américas 1551, Providencia, Guadalajara), se toma Av. de las Américas y Av. Obelisco hasta Av. Manuel Ávila Camacho en Instituto de Ciencias, Zapopan. Se continúa por Av. Juan Pablo II/Av. Laureles y el Anillo Periférico Norte Manuel Gómez Morín, incorporándose a la Carretera Guadalajara-Tepic (México 15 N) hasta tomar Carr. La Venta-Nextipac y llegar al destino en La Venta del Astillero, Zapopan." }
+    },
+    "chivas_verde": {
+      principal:  { distancia:"9.1 km", tiempo:"24 min", url:"https://n9.cl/n49x5", descripcion:"Dirígete hacia Av. de las Américas/Prol. de las Américas (~29 m), gira a la derecha hacia Av. Pablo Neruda (~2.3 km). Toma la 3ª salida en la rotonda hacia Av. Patria y continúa en la avenida hasta llegar a la Avenida Vallarta, en donde gira a la derecha y continúa hasta la Calle Hípico, en donde giras a la derecha para ingresar al destino Chivas Verde Valle." },
+      secundaria: { distancia:"9.1 km", tiempo:"24 min", url:"https://n9.cl/n49x5", descripcion:"Ruta secundaria. Dirígete hacia Av. de las Américas/Prol. de las Américas, gira a la derecha hacia Av. Pablo Neruda. Toma la 3ª salida en la rotonda hacia Av. Patria y continúa en la avenida hasta llegar a la Avenida Vallarta, en donde gira a la derecha y continúa hasta la Calle Hípico, en donde giras a la derecha para ingresar al destino Chivas Verde Valle." },
+      terciaria:  { distancia:"10.7 km", tiempo:"26 min", url:"https://acortar.link/QvW38U", descripcion:"Desde el Grand Fiesta Americana Guadalajara Country Club (Av. de las Américas 1551, Providencia, Guadalajara), se avanza por Av. de las Américas hasta Av. Adolfo López Mateos Norte en Lomas de Guevara, tomando la salida hacia México/Puerto Vallarta/Calz. Lázaro Cárdenas. Se continúa por Calz. Lázaro Cárdenas Poniente hasta la Carretera Guadalajara-Tepic (México 15) en Jardín de San Ignacio, Zapopan, finalizando por Av. Ignacio L. Vallarta y C. Hípico hasta llegar por C. Francisco I. Madero al destino en la colonia Jocotán, Zapopan." }
+    }
+  },
+
+  /* ═══ WESTIN → DESTINOS ═══ */
+  "westin": {
+    "estadio_gdl": {
+      principal:  { distancia:"12.7 km", tiempo:"22 min", url:"https://n9.cl/in7bo", descripcion:"Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero/Morelia-Guadalajara (dir. México 15D/Morelia/México) (~850 m). En la rotonda, toma la 4ª salida e incorpórate a Calz. Lázaro Cárdenas, mantente hasta que cambie de nombre a Av. Vallarta y continúa hasta cruzar periférico. Gira a la derecha hacia Av. Aviación, y dobla a la izquierda hacia Av. Del Bajío (~900 m). En la rotonda, toma la 2ª salida hacia Cto. J.V.C. (~1.3 km) y gira a la derecha (~9 m)." },
+      secundaria: { distancia:"12.7 km", tiempo:"22 min", url:"https://n9.cl/in7bo", descripcion:"Ruta secundaria. Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero/Morelia-Guadalajara (~850 m). En la rotonda, toma la 4ª salida e incorpórate a Calz. Lázaro Cárdenas, mantente hasta que cambie de nombre a Av. Vallarta y continúa hasta cruzar periférico. Gira a la derecha hacia Av. Aviación, y dobla a la izquierda hacia Av. Del Bajío. En la rotonda, toma la 2ª salida hacia Cto. J.V.C. y gira a la derecha." },
+      terciaria:  { distancia:"13.3 km", tiempo:"33 min", url:"https://acortar.link/azJQU0", descripcion:"Desde el The Westin Guadalajara (Av. de las Rosas 2911, Verde Valle, Guadalajara), se avanza por la Autopista Guadalajara-Morelia (México 15), Av. Mariano Otero y Las Torres hasta llegar al destino en El Bajío, Zapopan." }
+    },
+    "estadio_jalisco": {
+      principal:  { distancia:"11.6 km", tiempo:"31 min", url:"https://acortar.link/TxXLSg", descripcion:"Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero (~2.7 km). En la rotonda, toma la 3ª salida e incorpórate a Av. Niños Héroes (dir. Guadalajara/Centro Histórico) (~2.2 km), gira a la izquierda hacia Calz. Independencia Sur (dir. Saltillo) (~1.8 km) y continúa por Calz. Independencia Norte (~3.2 km). Gira a la derecha hacia Calle Monte Carmelo (~250 m), incorpórate a Mitla (~72 m) y continúa por Av. Fidel Velazquez (~300 m). El destino es Estadio Jalisco." },
+      secundaria: { distancia:"11.6 km", tiempo:"31 min", url:"https://acortar.link/TxXLSg", descripcion:"Ruta secundaria. Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero (~2.7 km). En la rotonda, toma la 3ª salida e incorpórate a Av. Niños Héroes (dir. Guadalajara/Centro Histórico) (~2.2 km), gira a la izquierda hacia Calz. Independencia Sur (dir. Saltillo) (~1.8 km) y continúa por Calz. Independencia Norte (~3.2 km). Gira a la derecha hacia Calle Monte Carmelo, incorpórate a Mitla y continúa por Av. Fidel Velazquez. El destino es Estadio Jalisco." },
+      terciaria:  { distancia:"11.6 km", tiempo:"31 min", url:"https://acortar.link/CHs14D", descripcion:"Desde el The Westin Guadalajara (Av. de las Rosas 2911, Verde Valle, Guadalajara), se avanza por Av. de las Rosas hacia Av. Mariano Otero, continuando por Av. Niños Héroes en dirección al Centro Histórico. Se incorpora a Calz. Independencia Sur y Norte hasta llegar por Av. Fidel Velázquez al destino en la colonia Independencia, Guadalajara." }
+    },
+    "sports_arena": {
+      principal:  { distancia:"15.2 km", tiempo:"33 min", url:"https://acortar.link/kBhQdv", descripcion:"Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero/Morelia-Guadalajara (~850 m). En la rotonda, toma la 4ª salida e incorpórate a Calz. Lázaro Cárdenas (~280 m), usa el carril izquierdo para tomar la vía de acceso hacia Nogales/Tepic (~130 m). Incorpórate a Calz. Lázaro Cárdenas/Carr. Guadalajara–Tepic (Méx 15 N) (~10 km), y usa el carril derecho para tomar la salida (~400 m). Da vuelta en U en C. P.º del Pacífico (~400 m) y toma la rampa hacia Carr. Guadalajara–Tepic (~350 m). El destino es Sports Arena." },
+      secundaria: { distancia:"15.2 km", tiempo:"33 min", url:"https://acortar.link/kBhQdv", descripcion:"Ruta secundaria. Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero/Morelia-Guadalajara (~850 m). En la rotonda, toma la 4ª salida e incorpórate a Calz. Lázaro Cárdenas (~280 m), usa el carril izquierdo para tomar la vía de acceso hacia Nogales/Tepic (~130 m). Incorpórate a Calz. Lázaro Cárdenas/Carr. Guadalajara–Tepic (Méx 15 N), y usa el carril derecho para tomar la salida. Da vuelta en U en C. P.º del Pacífico y toma la rampa hacia Carr. Guadalajara–Tepic. El destino es Sports Arena." },
+      terciaria:  { distancia:"23.2 km", tiempo:"33 min", url:"https://acortar.link/0ClILt", descripcion:"Desde el The Westin Guadalajara (Av. de las Rosas 2911, Verde Valle, Guadalajara), se toma Av. de las Rosas y Av. Adolfo López Mateos Sur para incorporarse al Anillo Periférico Poniente Manuel Gómez Morín en Zapopan, continuando por dicha vía hasta llegar a la Carretera Guadalajara-Tepic (México 15 S) en Technology Park Guadalajara, Zapopan." }
+    },
+    "academia_aga": {
+      principal:  { distancia:"22.4 km", tiempo:"31 min", url:"https://n9.cl/xupwb", descripcion:"Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero/Morelia-Guadalajara (~850 m). En la rotonda, toma la 4ª salida e incorpórate a Calz. Lázaro Cárdenas (~280 m), usa el carril izquierdo para tomar la vía de acceso hacia Nogales/Tepic (~130 m). Incorpórate a Calz. Lázaro Cárdenas/Carr. Guadalajara–Tepic (Méx 15 N) (~10 km), y usa el carril derecho para tomar la salida (~400 m). Continúa por Carr. la Venta-Nextipac, gira a la derecha después de El Gran Chaparral (~2.2 km) y gira a la izquierda (~600 m)." },
+      secundaria: { distancia:"22.4 km", tiempo:"31 min", url:"https://n9.cl/xupwb", descripcion:"Ruta secundaria. Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero/Morelia-Guadalajara (~850 m). En la rotonda, toma la 4ª salida e incorpórate a Calz. Lázaro Cárdenas (~280 m), usa el carril izquierdo para tomar la vía de acceso hacia Nogales/Tepic (~130 m). Incorpórate a Calz. Lázaro Cárdenas/Carr. Guadalajara–Tepic (Méx 15 N), y usa el carril derecho para tomar la salida. Continúa por Carr. la Venta-Nextipac, gira a la derecha después de El Gran Chaparral y gira a la izquierda." },
+      terciaria:  { distancia:"34.3 km", tiempo:"104 min", url:"https://acortar.link/6zI82z", descripcion:"Desde el The Westin Guadalajara (Av. de las Rosas 2911, Verde Valle, Guadalajara), se avanza por Av. Adolfo López Mateos Sur y Norte, continuando por Av. de las Américas y Av. Juan Pablo II/Av. Laureles hasta llegar por C. Hidalgo al destino en Carr. La Venta-Nextipac, Zapopan." }
+    },
+    "chivas_verde": {
+      principal:  { distancia:"8.5 km", tiempo:"15 min", url:"https://n9.cl/qh7eu", descripcion:"Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero/Morelia-Guadalajara (dir. México 15D/Morelia/México) (~850 m). En la rotonda, toma la 4ª salida e incorpórate a Calz. Lázaro Cárdenas (~280 m), usa el carril izquierdo para tomar la vía de acceso hacia Nogales/Tepic (~130 m). Incorpórate a Calz. Lázaro Cárdenas/Carr. Guadalajara–Tepic (Méx 15 N) (~2.1 km), usa los 2 carriles izquierdos (~1.4 km) y mantente a la izquierda (~2.6 km). Mantente a la derecha por Av. Ignacio L. Vallarta (~400 m), gira a la derecha hacia C. Hípico (~24 m), gira a la izquierda (~290 m) y gira a la izquierda hacia C. Francisco I. Madero (~81 m). El destino es Chivas Verde Valle." },
+      secundaria: { distancia:"8.5 km", tiempo:"15 min", url:"https://n9.cl/qh7eu", descripcion:"Ruta secundaria. Dirígete al noroeste por Av. de las Rosas (~280 m), gira a la derecha hacia Av. Mariano Otero/Morelia-Guadalajara (~850 m). En la rotonda, toma la 4ª salida e incorpórate a Calz. Lázaro Cárdenas (~280 m), usa el carril izquierdo para tomar la vía de acceso hacia Nogales/Tepic (~130 m). Incorpórate a Calz. Lázaro Cárdenas/Carr. Guadalajara–Tepic (Méx 15 N). Mantente a la derecha por Av. Ignacio L. Vallarta, gira a la derecha hacia C. Hípico, gira a la izquierda y gira a la izquierda hacia C. Francisco I. Madero. El destino es Chivas Verde Valle." },
+      terciaria:  { distancia:"19.0 km", tiempo:"28 min", url:"https://acortar.link/iRJc5U", descripcion:"Desde el The Westin Guadalajara (Av. de las Rosas 2911, Verde Valle, Guadalajara), se toma Av. de las Rosas y Av. Adolfo López Mateos Sur para incorporarse al Anillo Periférico Poniente Manuel Gómez Morín en Zapopan, tomando la salida hacia Puerto Vallarta por Av. Inglaterra. Se finaliza por C. Francisco I. Madero hasta llegar al destino en la colonia Jocotán, Zapopan." }
+    }
+  }
+};
+
+/* ──────────────────────────────────────────────────────────────
+   3. INICIALIZAR MAPA
+────────────────────────────────────────────────────────────── */
+const map = L.map('map', {
+  center: [20.6767, -103.3475],
+  zoom: 12,
+  zoomControl: true
+});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  maxZoom: 19
+}).addTo(map);
+
+/* ──────────────────────────────────────────────────────────────
+   4. POBLAR SELECTORES
+────────────────────────────────────────────────────────────── */
+const selOrigen  = document.getElementById('sel-origen');
+const selDestino = document.getElementById('sel-destino');
+
+Object.entries(UBICACIONES).forEach(([key, val]) => {
+  const opt1 = new Option(`${val.emoji} ${val.corto}`, key);
+  const opt2 = new Option(`${val.emoji} ${val.corto}`, key);
+  selOrigen.add(opt1);
+  selDestino.add(opt2);
+});
+
+/* ──────────────────────────────────────────────────────────────
+   5. MARCADORES EN EL MAPA
+────────────────────────────────────────────────────────────── */
+const markerLayer = L.layerGroup().addTo(map);
+const routeLayer  = L.layerGroup().addTo(map);
+
+function crearIcono(emoji, color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="
+      background:${color};
+      width:34px;height:34px;
+      border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 3px 10px rgba(0,0,0,.35);
+      border:2px solid white;
+    ">
+      <span style="transform:rotate(45deg);font-size:14px;">${emoji}</span>
+    </div>`,
+    iconSize: [34, 34],
+    iconAnchor: [17, 34],
+    popupAnchor: [0, -36]
+  });
+}
+
+function dibujarMarcadores(origenKey, destinoKey) {
+  markerLayer.clearLayers();
+
+  Object.entries(UBICACIONES).forEach(([key, val]) => {
+    let color = '#888';
+    if (key === origenKey)  color = '#c0392b';
+    else if (key === destinoKey) color = '#e67e22';
+
+    const marker = L.marker(val.coords, { icon: crearIcono(val.emoji, color) })
+      .bindPopup(`<div class="popup-inner">
+        <div class="popup-title">${val.nombre}</div>
+        <div class="popup-sub">${val.coords[0].toFixed(4)}, ${val.coords[1].toFixed(4)}</div>
+      </div>`, { className: 'custom-popup' });
+
+    markerLayer.addLayer(marker);
+  });
+}
+
+// Dibujar todos los marcadores al inicio
+dibujarMarcadores(null, null);
+
+/* ──────
+──────────────────────────────────────────────────────────────
+   6. FUNCIÓN PRINCIPAL: BUSCAR RUTAS
+────────────────────────────────────────────────────────────── */
+function buscarRutas() {
+  const origenKey  = selOrigen.value;
+  const destinoKey = selDestino.value;
+
+  if (!origenKey || !destinoKey) {
+    alert('Por favor selecciona tanto el Origen como el Destino.');
+    return;
+  }
+
+  if (origenKey === destinoKey) {
+    alert('El Origen y el Destino no pueden ser el mismo punto.');
+    return;
+  }
+
+  // Buscar rutas en ambas direcciones
+  let rutasData = null;
+  if (RUTAS[origenKey] && RUTAS[origenKey][destinoKey]) {
+    rutasData = RUTAS[origenKey][destinoKey];
+  } else if (RUTAS[destinoKey] && RUTAS[destinoKey][origenKey]) {
+    rutasData = RUTAS[destinoKey][origenKey];
+  }
+
+  const origen  = UBICACIONES[origenKey];
+  const destino = UBICACIONES[destinoKey];
+
+  // Dibujar marcadores resaltados
+  dibujarMarcadores(origenKey, destinoKey);
+
+  // Línea visual entre origen y destino (decorativa)
+  routeLayer.clearLayers();
+  if (rutasData) {
+    const colors = ['#c0392b', '#2980b9', '#27ae60'];
+    const offsets = [0, 0.0003, -0.0003];
+    ['principal','secundaria','terciaria'].forEach((tipo, i) => {
+      const pts = [
+        [origen.coords[0]  + offsets[i], origen.coords[1]  + offsets[i]],
+        [destino.coords[0] + offsets[i], destino.coords[1] + offsets[i]]
+      ];
+      L.polyline(pts, {
+        color: colors[i],
+        weight: i === 0 ? 5 : 3,
+        opacity: i === 0 ? 0.9 : 0.65,
+        dashArray: i === 1 ? '8,6' : i === 2 ? '4,4' : null
+      }).addTo(routeLayer);
+    });
+  }
+
+  // Ajustar vista
+  const bounds = L.latLngBounds([origen.coords, destino.coords]);
+  map.fitBounds(bounds, { padding: [80, 80] });
+
+  // Renderizar panel de resultados
+  renderResultados(origenKey, destinoKey, rutasData);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   7. RENDERIZAR RESULTADOS EN EL SIDEBAR
+────────────────────────────────────────────────────────────── */
+function renderResultados(origenKey, destinoKey, rutasData) {
+  const placeholder = document.getElementById('placeholder');
+  const resultados  = document.getElementById('resultados');
+
+  placeholder.style.display = 'none';
+  resultados.innerHTML = '';
+  resultados.classList.add('visible');
+
+  const origen  = UBICACIONES[origenKey];
+  const destino = UBICACIONES[destinoKey];
+
+  // Encabezado de ruta
+  const header = document.createElement('div');
+  header.style.cssText = 'padding:16px 20px;background:#faf7f3;border-bottom:1px solid #f0ebe4;';
+  header.innerHTML = `
+    <div style="font-size:11px;color:#999;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;">Ruta seleccionada</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:13px;font-weight:700;color:#c0392b;">${origen.emoji} ${origen.corto}</span>
+      <span style="color:#bbb;font-size:16px;">→</span>
+      <span style="font-size:13px;font-weight:700;color:#e67e22;">${destino.emoji} ${destino.corto}</span>
+    </div>
+  `;
+  resultados.appendChild(header);
+
+  if (!rutasData) {
+    const noData = document.createElement('div');
+    noData.style.cssText = 'padding:20px;text-align:center;color:#aaa;font-size:13px;';
+    noData.innerHTML = `
+      <div style="font-size:32px;margin-bottom:10px;">🔍</div>
+      <p>No se encontraron rutas preestablecidas para esta combinación. Intenta con otro par de puntos.</p>
+    `;
+    resultados.appendChild(noData);
+    return;
+  }
+
+  const tiposRuta = [
+    { key: 'principal',  label: 'Ruta Principal',  clase: 'principal',  badgeClase: 'badge-principal'  },
+    { key: 'secundaria', label: 'Ruta Secundaria', clase: 'secundaria', badgeClase: 'badge-secundaria' },
+    { key: 'terciaria',  label: 'Ruta Terciaria',  clase: 'terciaria',  badgeClase: 'badge-terciaria'  }
+  ];
+
+  tiposRuta.forEach((tipo, idx) => {
+    const ruta = rutasData[tipo.key];
+    if (!ruta) return;
+
+    const card = document.createElement('div');
+    card.className = `ruta-card ${tipo.clase}`;
+    if (idx === 0) card.classList.add('active');
+
+    card.innerHTML = `
+      <div class="ruta-header">
+        <span class="ruta-badge ${tipo.badgeClase}">${tipo.label}</span>
+      </div>
+      <div class="ruta-meta">
+        <span>📏 ${ruta.distancia}</span>
+        <span>⏱️ ${ruta.tiempo}</span>
+      </div>
+      <div class="ruta-desc">${ruta.descripcion}</div>
+      <a href="${ruta.url}" target="_blank" rel="noopener noreferrer"
+         class="btn-maps ${tipo.clase}">
+        🗺️ Abrir en Google Maps
+      </a>
+    `;
+
+    resultados.appendChild(card);
+  });
+}
+
+/* ──────────────────────────────────────────────────────────────
+   8. RESETEAR AL CAMBIAR SELECTORES
+────────────────────────────────────────────────────────────── */
+selOrigen.addEventListener('change', resetPanel);
+selDestino.addEventListener('change', resetPanel);
+
+function resetPanel() {
+  document.getElementById('placeholder').style.display = '';
+  const res = document.getElementById('resultados');
+  res.innerHTML = '';
+  res.classList.remove('visible');
+  routeLayer.clearLayers();
+  dibujarMarcadores(selOrigen.value || null, selDestino.value || null);
+}
+
+</script>
+</body>
+</html>
